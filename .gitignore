@@ -1,0 +1,11 @@
+.chalice/deployments/
+.chalice/venv/
+
+# Chalice Files
+.chalice/*
+
+# IDE Files
+.idea/
+
+# Virtual Environment
+venv/
