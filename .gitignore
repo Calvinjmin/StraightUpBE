@@ -1,3 +1,4 @@
+# Chalice Files
 .chalice/deployments/
 .chalice/venv/
 
@@ -9,3 +10,9 @@
 
 # Virtual Environment
 venv/
+
+# Environment Variables
+.env
+
+# PyCharm Cache
+__pycache__/
