@@ -35,17 +35,32 @@ def create_user():
 
     # New Account Data from FE
     new_user_data = app.current_request.json_body
+    print(new_user_data)
 
+    # Put new data in dynamo
     try:
         dynamodb_table.put_item(
             Item={
-                'username': new_user_data.username,
+                'username': new_user_data['username'],
+                'password': new_user_data['password'],
+                'firstName': new_user_data['firstName'],
+                'lastName': new_user_data['lastName'],
+                'email': new_user_data['email'],
             }
         )
     except ClientError as e:
         print(e.response['Error']['Message'])
     except Exception as error:
         print(error)
+
+    # Fetch data and return it to the front end
+    try:
+        response = dynamodb_table.get_item(Key={'username': new_user_data['username']})
+        user_elements_be = response['Item']
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+    else:
+        return user_elements_be
 
 
 @app.route('/login', methods=['POST'])
@@ -59,7 +74,7 @@ def login():
     user_data = app.current_request.json_body
 
     try:
-        response = dynamodb_table.get_item(Key={'username': user_data.username})
+        response = dynamodb_table.get_item(Key={'username': user_data['username']})
         user_elements_be = response['Item']
         verification = verify_user(user_data, user_elements_be)
     except ClientError as e:
@@ -67,6 +82,7 @@ def login():
     else:
         if verification:
             return user_elements_be
+        return None
 
 
 def verify_user(front_end_data, back_end_data):
@@ -76,7 +92,8 @@ def verify_user(front_end_data, back_end_data):
     :param back_end_data: Data from Dynamo Database
     :return: Boolean value - Username and Passwords are the same
     """
-    return front_end_data.username == back_end_data.username and front_end_data.password == back_end_data.password
+    return front_end_data['username'] == back_end_data['username'] \
+           and front_end_data['password'] == back_end_data['password']
 
 
 if __name__ == "__main__":
