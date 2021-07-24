@@ -75,13 +75,15 @@ def login():
 
     try:
         response = dynamodb_table.get_item(Key={'username': user_data['username']})
-        user_elements_be = response['Item']
-        verification = verify_user(user_data, user_elements_be)
+        if response['Item']:
+            user_elements_be = response['Item']
+            verification = verify_user(user_data, user_elements_be)
+            if verification:
+                return user_elements_be
+        raise KeyError('User not in the system.')
     except ClientError as e:
         print(e.response['Error']['Message'])
     else:
-        if verification:
-            return user_elements_be
         return None
 
 
