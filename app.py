@@ -23,7 +23,7 @@ def index():
     """
     :return: INTRO to Chalice Deploy
     """
-    return {'BACK END AWS CHALICE - STRAIGHT UP'}
+    return 'BACK END AWS CHALICE - STRAIGHT UP'
 
 
 @app.route('/create_user', methods=['POST'])
@@ -35,7 +35,6 @@ def create_user():
 
     # New Account Data from FE
     new_user_data = app.current_request.json_body
-    print(new_user_data)
 
     # Put new data in dynamo
     try:
